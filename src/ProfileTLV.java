@@ -31,6 +31,7 @@ public class ProfileTLV {
     public int getTag() {
         return tag.getTypeKey();
     }
+    
     public void setTag(int tag) {
     	this.tag = ProfileType.INVALID_PROFILE_PARAM;
     	for( ProfileType type : ProfileType.values()){

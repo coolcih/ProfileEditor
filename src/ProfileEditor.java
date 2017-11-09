@@ -323,6 +323,7 @@ public class ProfileEditor extends JFrame{
 			            			entryTLV.setValue(entry.getValue().getText());
 			            			tlvList.set(i, entryTLV);
 			            			found = true;
+			            			System.out.print("Found" + entry.getKey() + "=" + entry.getValue().getText() + "\n");
 			            			break;
 			            		}
 			            	}
@@ -351,8 +352,25 @@ public class ProfileEditor extends JFrame{
 		        for(int i = 0; i < tlvList.size(); i++) {
 		        	profileSize += tlvList.get(i).getLen();
             	}
+		        System.out.print("New profile size:" + profileSize + "\n");
 		        
 		        byte[] newBuff = new byte[profileSize];
+		        int offset = 32;
+		     		        
+		        for(int i = 0; i < tlvList.size(); i++) {
+		        	ProfileTLV entryTLV = tlvList.get(i);
+		        	short len;
+		        	//Fill T
+		        	newBuff[offset++] = (byte)(entryTLV.getTag() >> 8 & 0xFF);
+		        	newBuff[offset++] = (byte)(entryTLV.getTag() & 0xFF);
+		        	//Fill L
+		        	len = (short)entryTLV.getLen();
+		        	newBuff[offset++] = (byte)(len >> 8 & 0xFF);
+		        	newBuff[offset++] = (byte)(len & 0xFF);
+		        	//Fill V
+		        	System.arraycopy(entryTLV.getValue(), 0, newBuff, offset, len);
+		        	offset += len;
+		        }
 		        
 		        //Update profile header		        
 				String techMask = techMaskTextField.getText().trim();
@@ -391,7 +409,6 @@ public class ProfileEditor extends JFrame{
 				if(version.equals("N/A")) version = "0x0000";
 				prfHeader.putProfileHeaderVersion(newBuff, version);
 				
-				
 				//fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES );
 				//fileChooser.showDialog(new JLabel(), "选择"); 
 				int select = fileChooser.showSaveDialog(ProfileEditor.this);
@@ -426,7 +443,7 @@ public class ProfileEditor extends JFrame{
 
 				try {
 					out=new DataOutputStream(new FileOutputStream(path));
-					out.write(buff);
+					out.write(newBuff);
 					out.close();
 				} catch (FileNotFoundException e1) {
 					JOptionPane.showMessageDialog(ProfileEditor.this, "文件保存出错"+e1.getMessage());
