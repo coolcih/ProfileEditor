@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -47,6 +48,9 @@ public class ProfileEditor extends JFrame{
 	DataOutputStream out;
 	
 	public ProfileEditor() {
+		JOptionPane.showMessageDialog(ProfileEditor.this, "1. Value display as HEX value.\n"
+                + "2. N/A mean no this item in profile or remove item from profile.\n");
+		
 		this.setTitle("Profile Editor");
 		this.setSize(800,800);
 		this.setLocation(100,260);
@@ -285,10 +289,11 @@ public class ProfileEditor extends JFrame{
 		        for (int i = 0; i < tlvList.size(); i++) {
 		        	String tlvString = null;
 		        	ProfileTLV Item = tlvList.get(i);
+		        	System.out.print("TLV " + i + "\n");
 		        	System.out.println("T: " + Integer.toHexString(Item.getTag()) + " - L: " + Item.getLen() + " - V:" + Item.getValueString());
 		        	tlvString = String.format("T: 0x%x - L: %d - V: %s\n", Item.getTag(), Item.getLen(), Item.getValueString());
 		        	jta.append(tlvString);
-		        	textFieldList.get(Item.getTag()).setText(Item.getValueString());
+		        	textFieldList.get(Item.getTag()).setText("0x" + Item.getValueString());
 		        }
 			}
 		});
@@ -300,6 +305,35 @@ public class ProfileEditor extends JFrame{
 				ProfileHeader prfHeader;
 				int profileSize;
 				
+				//Check input validate
+		        Set<Map.Entry<Integer, JTextField>> set;
+		        Iterator<Map.Entry<Integer, JTextField>> iterator;
+		        
+		        set = textFieldList.entrySet();
+		        iterator = set.iterator();
+		        while (iterator.hasNext()) {
+		        	Entry<Integer, JTextField> entry= iterator.next();
+		        	String regex = "([A-F]|[a-f]|[0-9]){0,}";
+		            //System.out.print(entry.getKey() + "=" + entry.getValue().getText() + "\n");
+		        	String input = entry.getValue().getText();
+		        	input = input.trim().replace(" ", "").toLowerCase(Locale.US);
+		        	input = input.trim().replace("0x", "");
+
+		        	if(!input.equalsIgnoreCase("N/A") && (input.length()%2) != 0) {
+		            	String temp;
+		            	temp = String.format("Key 0x%x:\nInput value should be byte align e.g. 0x1 must input 0x01.", entry.getKey());
+		        		JOptionPane.showMessageDialog(ProfileEditor.this, temp);
+		            	return;
+		        	}
+		        	
+		            if(!input.equalsIgnoreCase("N/A") && !input.matches(regex)) {
+		            	String temp;
+		            	temp = String.format("Key 0x%x:\nInvalid charactor! Only 0-9 A-F a-f allowed", entry.getKey());
+		            	JOptionPane.showMessageDialog(ProfileEditor.this, temp);
+		            	return;
+		            }
+		        }
+				
 				System.out.print("=============== Write button ===============\n");
 				
 				if(slectedFile != null) {
@@ -308,8 +342,10 @@ public class ProfileEditor extends JFrame{
 			        ProfileAnalyze profileAnalyze = new ProfileAnalyze();
 			        tlvList = profileAnalyze.unpack(buff, prfHeader.getProfileHeaderLen());
 			        
-			        Set<Map.Entry<Integer, JTextField>> set = textFieldList.entrySet();
-			        Iterator<Map.Entry<Integer, JTextField>> iterator = set.iterator();
+			        //Set<Map.Entry<Integer, JTextField>> set = textFieldList.entrySet();
+			        //Iterator<Map.Entry<Integer, JTextField>> iterator = set.iterator();
+			        set = textFieldList.entrySet();
+			        iterator = set.iterator();
 			        
 			        while (iterator.hasNext())
 			        {
@@ -323,7 +359,7 @@ public class ProfileEditor extends JFrame{
 			            			entryTLV.setValue(entry.getValue().getText());
 			            			tlvList.set(i, entryTLV);
 			            			found = true;
-			            			System.out.print("Found" + entry.getKey() + "=" + entry.getValue().getText() + "\n");
+			            			System.out.print("Found " + entry.getKey() + "=" + entryTLV.getValueString() + "\n");
 			            			break;
 			            		}
 			            	}
@@ -350,6 +386,7 @@ public class ProfileEditor extends JFrame{
 		        //Caculate profile size
 		        profileSize = prfHeader.getProfileHeaderLen(); //
 		        for(int i = 0; i < tlvList.size(); i++) {
+		        	profileSize += 4; //T and L
 		        	profileSize += tlvList.get(i).getLen();
             	}
 		        System.out.print("New profile size:" + profileSize + "\n");
@@ -360,15 +397,25 @@ public class ProfileEditor extends JFrame{
 		        for(int i = 0; i < tlvList.size(); i++) {
 		        	ProfileTLV entryTLV = tlvList.get(i);
 		        	short len;
+		        	System.out.print("TLV " + i + "\n");
 		        	//Fill T
-		        	newBuff[offset++] = (byte)(entryTLV.getTag() >> 8 & 0xFF);
 		        	newBuff[offset++] = (byte)(entryTLV.getTag() & 0xFF);
+		        	System.out.print("T newBuff[" + (offset-1) + "]" + newBuff[offset-1] + "\n");
+		        	newBuff[offset++] = (byte)(entryTLV.getTag() >> 8 & 0xFF);
+		        	System.out.print("T newBuff[" + (offset-1) + "]" + newBuff[offset-1] + "\n");
 		        	//Fill L
 		        	len = (short)entryTLV.getLen();
-		        	newBuff[offset++] = (byte)(len >> 8 & 0xFF);
 		        	newBuff[offset++] = (byte)(len & 0xFF);
+		        	System.out.print("L newBuff[" + (offset-1) + "]" + newBuff[offset-1] + "\n");
+		        	newBuff[offset++] = (byte)(len >> 8 & 0xFF);
+		        	System.out.print("L newBuff[" + (offset-1) + "]" + newBuff[offset-1] + "\n");
 		        	//Fill V
-		        	System.arraycopy(entryTLV.getValue(), 0, newBuff, offset, len);
+		        	//System.arraycopy(entryTLV.getValue(), 0, newBuff, offset, len);
+		        	byte[] temp = entryTLV.getValue();
+		        	for(int j = 0; j < len; j++) {
+		        		//newBuff[offset + j] = temp[len -1 - j];
+		        		newBuff[offset + j] = temp[j];
+		        	}
 		        	offset += len;
 		        }
 		        
@@ -379,7 +426,7 @@ public class ProfileEditor extends JFrame{
 				
 				String profileNumber =  profileNumberTextField.getText().trim();
 				System.out.println("New profileNumber: " + profileNumber);
-				prfHeader.putProfileHeaderTechMask(newBuff, profileNumber);
+				prfHeader.putProfileHeaderProfileNumber(newBuff, profileNumber);
 				
 				System.out.println("New profileSize: " + profileSize);
 				prfHeader.putProfileHeaderProfileSize(newBuff, profileSize);
@@ -404,8 +451,8 @@ public class ProfileEditor extends JFrame{
 				System.out.println("New lastReadTime: " + lastReadTime);
 				prfHeader.putProfileHeaderLastReadTime(newBuff, lastReadTime);
 
-				String version = techMaskTextField.getText().trim(); //TODO
-				System.out.println("New lastReadTime: " + version);
+				String version = versionTextField.getText().trim(); //TODO
+				System.out.println("New version: " + version);
 				if(version.equals("N/A")) version = "0x0000";
 				prfHeader.putProfileHeaderVersion(newBuff, version);
 				

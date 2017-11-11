@@ -47,15 +47,16 @@ public class ProfileAnalyze {
 
     //获取tag，并转成int
     public int getTagToInt(byte[] data, int offset){
-        int mask = 0xFF;
-        int temp = 0;
+        //int mask = 0xFF;
+        //int temp = 0;
         int result = 0;
-        
+        /*
         for (int i = 0; i < 2; i++) {
             //result <<= 8;//向左位移8
             temp = data[offset + i] & mask;
             result |= temp;//将获取出的数据填充到result让出右侧的8位上
-        }
+        }*/
+        result = (data[offset] | data[offset+1]<<8);
         System.out.println("Tag: 0x" + Integer.toHexString(result));
         return result;
     }

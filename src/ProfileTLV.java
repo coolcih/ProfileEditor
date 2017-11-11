@@ -106,8 +106,10 @@ public class ProfileTLV {
 	    	 for(int i = 0; i < iLen; i++){
 	    		m=i*2+1;
 	    		n=m+1;
+	    		System.out.println("convert: " + src.substring(i*2, m) + src.substring(m,n));
 	    		ret[i] = (byte)(Integer.decode("0x"+ src.substring(i*2, m) + src.substring(m,n)) & 0xFF);
-	    	 }
+	    		System.out.println("after convert: " + ret[i]);
+	    	}
    	 }
    	 return ret;
     }

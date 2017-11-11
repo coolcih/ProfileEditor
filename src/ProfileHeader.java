@@ -101,6 +101,17 @@ public class ProfileHeader {
     	putShort(data, 2, profileNumber);
     }
     
+    public void putProfileHeaderProfileNumber(byte[] data, String profileNumber) {
+    	byte[] temp = hexStr2Bytes(profileNumber);
+    	if(temp.length < 2) {
+    		data[2] = temp[0];
+    		data[3] = 0;
+    	} else {
+    		data[2] = temp[0];
+    		data[3] = temp[1];
+    	}
+    }
+    
     public int getProfileHeaderProfileSize() {
         return this.profileSize;
     }
@@ -146,7 +157,7 @@ public class ProfileHeader {
     }
     
     public void putProfileHeaderLastReadTime(byte[] data, int lastReadTime) {
-    	putInt(data, 20, lastReadTime);
+    	putInt(data, 24, lastReadTime);
     }
     
     public int getProfileHeaderVersion() {
@@ -156,16 +167,16 @@ public class ProfileHeader {
     public void putProfileHeaderVersion(byte[] data, String version) {
     	byte[] temp = hexStr2Bytes(version);
     	if(temp.length < 2) {
-    		data[0] = temp[0];
-    		data[1] = 0;
+    		data[28] = temp[0];
+    		data[29] = 0;
     	} else {
-    		data[0] = temp[0];
-    		data[1] = temp[1];
+    		data[28] = temp[0];
+    		data[29] = temp[1];
     	}
     }
     
     public void putProfileHeaderVersion(byte[] data, short version) {
-    	putShort(data, 0, version);
+    	putShort(data, 28, version);
     }
     
     public int getProfileHeaderReservedBytes() {
