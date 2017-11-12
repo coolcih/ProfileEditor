@@ -18,7 +18,7 @@ import java.util.Set;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
-public class ProfileEditor extends JFrame{
+public class ProfileEditor extends JFrame implements ItemListener {
 
 	/**
 	 * 
@@ -33,9 +33,71 @@ public class ProfileEditor extends JFrame{
 	
 	JFrame frame = new JFrame("Profile Editor");
 	
+	JPanel headerPanel = new JPanel();
+	//JScrollPane headerScrollPane=new JScrollPane(headerPanel);
+	
+	JPanel techMaskPanel=new JPanel();
+	JLabel techMaskLabel=new JLabel("Tech Mask");
+	JTextField techMaskTextField=new JTextField("N/A");
+	static JPanel profileNumberPanel=new JPanel();
+	static JLabel profileNumberLabel=new JLabel("Profile Number");
+	JTextField profileNumberTextField=new JTextField("N/A");
+	static JPanel profileSizePanel=new JPanel();
+	static JLabel profileSizeLabel=new JLabel("Profile Size");
+	JLabel profileSizeValueLabel=new JLabel("N/A");
+	static JPanel numTlvsPanel=new JPanel();
+	static JLabel numTlvsLabel=new JLabel("Total TLVs");
+	JLabel numTlvs=new JLabel("N/A");
+	static JPanel magicNumberPanel=new JPanel();
+	static JLabel magicNumberLabel=new JLabel("Magic Number");
+	JLabel magicNumber=new JLabel("N/A");
+	static JPanel timeCreatedPanel=new JPanel();
+	static JLabel timeCreatedLabel=new JLabel("Time Created");
+	JLabel timeCreated=new JLabel("N/A");
+	static JPanel lastModifiedTimePanel=new JPanel();
+	static JLabel lastModifiedTimeLabel=new JLabel("Last Modified Time");
+	JLabel lastModifiedTime=new JLabel("N/A");
+	static JPanel lastReadTimePanel=new JPanel();
+	static JLabel lastReadTimeLabel=new JLabel("Last Read Time");
+	JLabel lastReadTime=new JLabel("N/A");
+	static JPanel versionPanel=new JPanel();
+	static JLabel versionLabel=new JLabel("Version");
+	JTextField versionTextField=new JTextField("N/A");
+	static JPanel reservedPanel=new JPanel();
+	static JLabel reservedLabel=new JLabel("Reserved Bits");
+	JLabel reservedBits=new JLabel("N/A");
+	
+	static JPanel param3gppPane=new JPanel();
+	//static JScrollPane param3gppScrollPane=new JScrollPane(param3gppPane);
+	static JPanel param3gppItemPane[] = new JPanel[100];
+	static JLabel param3gppLabel[] = new JLabel[100];
+	static JTextField param3gppTextField[] = new JTextField[100];
+	static int param3gppItemCount = 0;
+	
+	static JPanel param3gpp2Pane=new JPanel();
+	static JPanel param3gpp2ItemPane[] = new JPanel[100];
+	static JLabel param3gpp2Label[] = new JLabel[100];
+	static JTextField param3gpp2TextField[] = new JTextField[100];
+	static int param3gpp2ItemCount = 0;
+	
+	static JPanel paramCommTechPane=new JPanel();
+	static JPanel paramCommTechItemPane[] = new JPanel[50];
+	static JLabel paramCommTechLabel[] = new JLabel[50];
+	static JTextField paramCommTechTextField[] = new JTextField[50];
+	static int paramCommTechItemCount = 0;
+	
+	static JPanel paramGeneralPane=new JPanel();
+	static JPanel paramGeneralItemPane[] = new JPanel[50];
+	static JLabel paramGeneralLabel[] = new JLabel[50];
+	static JTextField paramGeneralTextField[] = new JTextField[50];
+	static int paramGeneralItemCount = 0;
+	
 	JPanel jButtonPane=new JPanel();
 	JButton jReadButton = new JButton("Open Profile");
 	JButton jWriteButton = new JButton("Write");
+	String comboItem[]={"Profile Header","3GPP Parameters","3GPP2 Parameters","Common Tech Parameters","General Parameters"};
+	String lastComboItem = "Profile Header";
+	JComboBox<String> comboBox=new JComboBox<String>(comboItem);
 	
 	JTextArea jta=new JTextArea(5,100);
 	JScrollPane jsp=new JScrollPane(jta);
@@ -58,180 +120,142 @@ public class ProfileEditor extends JFrame{
 		
 		jReadButton.setBounds(500,10,150,30);
 		jWriteButton.setBounds(700,10,150,30);
+		comboBox.setBounds(270,10,180,30);
+		
+		jButtonPane.setLayout(null);
+		jButtonPane.setPreferredSize(new Dimension(0, 50));
+		jButtonPane.add(jReadButton);
+		jButtonPane.add(jWriteButton);
+		jButtonPane.add(comboBox);
+		comboBox.addItemListener(this);
+		this.getContentPane().add(jButtonPane, BorderLayout.NORTH);
+
+		this.getContentPane().add(jsp, BorderLayout.SOUTH);
 		
 		//Profile Header
-		JPanel headerPanel = new JPanel();
 		headerPanel.setBorder(new EmptyBorder(5,5,5,5));
-		headerPanel.setLayout(new GridLayout(20,1,1,1));
-		JLabel profileHeaderLabel=new JLabel("Profile Header:");
-		JLabel profileHeaderLabel2=new JLabel("        ");
-		headerPanel.add(profileHeaderLabel);
-		headerPanel.add(profileHeaderLabel2);
-		JLabel techMaskLabel=new JLabel("Tech Mask");
-		JTextField techMaskTextField=new JTextField("N/A");
-		techMaskTextField.setColumns(10);
-		headerPanel.add(techMaskLabel);
-		headerPanel.add(techMaskTextField);
-		JLabel profileNumberLabel=new JLabel("Profile Number");
-		JTextField profileNumberTextField=new JTextField("N/A");
-		profileNumberTextField.setColumns(10);
-		headerPanel.add(profileNumberLabel);
-		headerPanel.add(profileNumberTextField);
-		JLabel profileSizeLabel=new JLabel("Profile Size");
-		JLabel profileSize=new JLabel("N/A");
-		headerPanel.add(profileSizeLabel);
-		headerPanel.add(profileSize);
-		JLabel numTlvsLabel=new JLabel("Total TLVs");
-		JLabel numTlvs=new JLabel("N/A");
-		headerPanel.add(numTlvsLabel);
-		headerPanel.add(numTlvs);
-		JLabel magicNumberLabel=new JLabel("Magic Number");
-		JLabel magicNumber=new JLabel("N/A");
-		headerPanel.add(magicNumberLabel);
-		headerPanel.add(magicNumber);
-		JLabel timeCreatedLabel=new JLabel("Time Created");
-		JLabel timeCreated=new JLabel("N/A");
-		headerPanel.add(timeCreatedLabel);
-		headerPanel.add(timeCreated);
-		JLabel lastModifiedTimeLabel=new JLabel("Last Modified Time");
-		JLabel lastModifiedTime=new JLabel("N/A");
-		headerPanel.add(lastModifiedTimeLabel);
-		headerPanel.add(lastModifiedTime);
-		JLabel lastReadTimeLabel=new JLabel("Last Read Time");
-		JLabel lastReadTime=new JLabel("N/A");
-		headerPanel.add(lastReadTimeLabel);
-		headerPanel.add(lastReadTime);
-		JLabel versionLabel=new JLabel("Version");
-		JTextField versionTextField=new JTextField("N/A");
-		versionTextField.setColumns(10);
-		headerPanel.add(versionLabel);
-		headerPanel.add(versionTextField);
-		JLabel reservedLabel=new JLabel("Reserved Bits");
-		JLabel reservedBits=new JLabel("N/A");
-		headerPanel.add(reservedLabel);
-		headerPanel.add(reservedBits);
-		//JScrollPane headerScrollPane=new JScrollPane(headerPanel);
-		
-		//Profile Content
-		JPanel param3gppPane=new JPanel();
-		param3gppPane.setBorder(new EmptyBorder(5,5,5,5));	
-		param3gppPane.setLayout(new GridLayout(20,1,1,1));
-		JPanel title3gppPane=new JPanel();
-		title3gppPane.add(new JLabel("3GPP Parameters:"));
-		param3gppPane.add(title3gppPane);
+		headerPanel.setLayout(new GridLayout(10,2,1,1));
 
-		JPanel param3gpp2Pane=new JPanel();
+		techMaskTextField.setColumns(10);
+		techMaskPanel.add(techMaskLabel);
+		techMaskPanel.add(techMaskTextField);
+		headerPanel.add(techMaskPanel);
+		
+		profileNumberTextField.setColumns(10);
+		profileNumberPanel.add(profileNumberLabel);
+		profileNumberPanel.add(profileNumberTextField);
+		headerPanel.add(profileNumberPanel);
+		
+		profileSizePanel.add(profileSizeLabel);
+		profileSizePanel.add(profileSizeValueLabel);
+		headerPanel.add(profileSizePanel);
+		
+		numTlvsPanel.add(numTlvsLabel);
+		numTlvsPanel.add(numTlvs);
+		headerPanel.add(numTlvsPanel);
+		
+		magicNumberPanel.add(magicNumberLabel);
+		magicNumberPanel.add(magicNumber);
+		headerPanel.add(magicNumberPanel);
+		
+		timeCreatedPanel.add(timeCreatedLabel);
+		timeCreatedPanel.add(timeCreated);
+		headerPanel.add(timeCreatedPanel);
+		
+		lastModifiedTimePanel.add(lastModifiedTimeLabel);
+		lastModifiedTimePanel.add(lastModifiedTime);
+		headerPanel.add(lastModifiedTimePanel);
+		
+		lastReadTimePanel.add(lastReadTimeLabel);
+		lastReadTimePanel.add(lastReadTime);
+		headerPanel.add(lastReadTimePanel);
+		
+		versionTextField.setColumns(10);
+		versionPanel.add(versionLabel);
+		versionPanel.add(versionTextField);
+		headerPanel.add(versionPanel);
+		
+		reservedPanel.add(reservedLabel);
+		reservedPanel.add(reservedBits);
+		headerPanel.add(reservedPanel);
+				
+		//Profile Content
+		param3gppPane.setBorder(new EmptyBorder(5,5,5,5));	
+		param3gppPane.setLayout(new GridLayout(20,2,1,1));
+
 		param3gpp2Pane.setBorder(new EmptyBorder(5,5,5,5));	
 		param3gpp2Pane.setLayout(new GridLayout(20,1,1,1));
-		JPanel title3gpp2Pane=new JPanel();
-		title3gpp2Pane.add(new JLabel("3GPP2 Parameters:"));
-		param3gpp2Pane.add(title3gpp2Pane);
 		
-		JPanel paramCommTechPane=new JPanel();
 		paramCommTechPane.setBorder(new EmptyBorder(5,5,5,5));	
 		paramCommTechPane.setLayout(new GridLayout(20,1,1,1));
-		JPanel titleCommTechPane=new JPanel();
-		titleCommTechPane.add(new JLabel("Common Tech Parameters:"));
-		paramCommTechPane.add(titleCommTechPane);
 		
-		JPanel paramGeneralPane=new JPanel();
 		paramGeneralPane.setBorder(new EmptyBorder(5,5,5,5));	
 		paramGeneralPane.setLayout(new GridLayout(20,1,1,1));
-		JPanel titleGeneralPane=new JPanel();
-		titleGeneralPane.add(new JLabel("General Parameters:"));
-		paramGeneralPane.add(titleGeneralPane);
 
+        int i = 0;
+        int j = 0;
+        int k = 0;
+        int l = 0;
     	for( ProfileType type : ProfileType.values()){
     		if(type.is3GPPKey()) {
-    			String labelString = null;
-	    		JPanel panel=new JPanel();
-	    		param3gppPane.add(panel);
-	    		//JLabel label1=new JLabel(type.getLabel() + "(0x" + type.getValue() + ")");
-	    		labelString = String.format("%s(0x%x)", type.getLabel(), type.getTypeKey());
-	    		JLabel label1=new JLabel(labelString);
-	    		JTextField textField=new JTextField("N/A");
-	    		textField.setColumns(10);
-	    		panel.add(label1);
-	    		panel.add(textField);
-	    		textFieldList.put(type.getTypeKey(), textField);
+    			param3gppItemPane[i] = new JPanel();
+	   			String labelString = null;
+      			labelString = String.format("%s(0x%x)", type.getLabel(), type.getTypeKey());
+    			param3gppLabel[i] = new JLabel(labelString); 
+      			param3gppTextField[i]=new JTextField("N/A");
+    			param3gppTextField[i].setColumns(10);
+    			//param3gppItemPane[i] = new JPanel();
+    			param3gppItemPane[i].add(param3gppLabel[i]);
+    			param3gppItemPane[i].add(param3gppTextField[i]); 
+    			param3gppPane.add(param3gppItemPane[i]);
+    			textFieldList.put(type.getTypeKey(), param3gppTextField[i]);
+    			i++;
     		} else if(type.is3GPP2Key()) {
-    			String labelString = null;
-	    		JPanel panel=new JPanel();
-	    		param3gpp2Pane.add(panel);
-	    		//JLabel label1=new JLabel(type.getLabel() + "(0x" + type.getValue() + ")");
-	    		labelString = String.format("%s(0x%x)", type.getLabel(), type.getTypeKey());
-	    		JLabel label1=new JLabel(labelString);
-	    		JTextField textField=new JTextField("N/A");
-	    		textField.setColumns(10);
-	    		panel.add(label1);
-	    		panel.add(textField);
-	    		textFieldList.put(type.getTypeKey(), textField);    			
+    			param3gpp2ItemPane[j] = new JPanel();
+	   			String labelString = null;
+      			labelString = String.format("%s(0x%x)", type.getLabel(), type.getTypeKey());
+      			param3gpp2Label[j] = new JLabel(labelString); 
+      			param3gpp2TextField[j]=new JTextField("N/A");
+    			param3gpp2TextField[j].setColumns(10);
+    			param3gpp2ItemPane[j].add(param3gpp2Label[j]);
+    			param3gpp2ItemPane[j].add(param3gpp2TextField[j]); 
+    			param3gpp2Pane.add(param3gpp2ItemPane[j]);
+    			textFieldList.put(type.getTypeKey(), param3gpp2TextField[j]);
+    			j++;
     		} else if(type.isCommonTechKey()) {
-    			String labelString = null;
-	    		JPanel panel=new JPanel();
-	    		paramCommTechPane.add(panel);
-	    		//JLabel label1=new JLabel(type.getLabel() + "(0x" + type.getValue() + ")");
-	    		labelString = String.format("%s(0x%x)", type.getLabel(), type.getTypeKey());
-	    		JLabel label1=new JLabel(labelString);
-	    		JTextField textField=new JTextField("N/A");
-	    		textField.setColumns(10);
-	    		panel.add(label1);
-	    		panel.add(textField);
-	    		textFieldList.put(type.getTypeKey(), textField);     			
+    			paramCommTechItemPane[k] = new JPanel();
+	   			String labelString = null;
+      			labelString = String.format("%s(0x%x)", type.getLabel(), type.getTypeKey());
+      			paramCommTechLabel[k] = new JLabel(labelString); 
+      			paramCommTechTextField[k]=new JTextField("N/A");
+      			paramCommTechTextField[k].setColumns(10);
+      			paramCommTechItemPane[k].add(paramCommTechLabel[k]);
+      			paramCommTechItemPane[k].add(paramCommTechTextField[k]); 
+      			paramCommTechPane.add(paramCommTechItemPane[k]);
+      			textFieldList.put(type.getTypeKey(), paramCommTechTextField[k]);
+    			k++;
     		} else if(type.isGeneralKey()) {
-    			String labelString = null;
-	    		JPanel panel=new JPanel();
-	    		paramGeneralPane.add(panel);
-	    		//JLabel label1=new JLabel(type.getLabel() + "(0x" + type.getValue() + ")");
-	    		labelString = String.format("%s(0x%x)", type.getLabel(), type.getTypeKey());
-	    		JLabel label1=new JLabel(labelString);
-	    		JTextField textField=new JTextField("N/A");
-	    		textField.setColumns(10);
-	    		panel.add(label1);
-	    		panel.add(textField);
-	    		textFieldList.put(type.getTypeKey(), textField);    			
+    			paramGeneralItemPane[l] = new JPanel();
+	   			String labelString = null;
+      			labelString = String.format("%s(0x%x)", type.getLabel(), type.getTypeKey());
+      			paramGeneralLabel[l] = new JLabel(labelString); 
+      			paramGeneralTextField[l]=new JTextField("N/A");
+      			paramGeneralTextField[l].setColumns(10);
+      			paramGeneralItemPane[l].add(paramGeneralLabel[l]);
+      			paramGeneralItemPane[l].add(paramGeneralTextField[l]); 
+      			paramGeneralPane.add(paramGeneralItemPane[l]);
+      			textFieldList.put(type.getTypeKey(), paramGeneralTextField[l]);
+    			l++;
     		}
+    		
+    		param3gppItemCount = i;
+    		param3gpp2ItemCount = j;
+    		paramCommTechItemCount = k;
+    		paramGeneralItemCount = l;
     	}
 	
-    	JScrollPane param3gppScrollPane=new JScrollPane(param3gppPane);
-    	JScrollPane param3gpp2ScrollPane=new JScrollPane(param3gpp2Pane);
-    	JScrollPane paramCommTechPaneScrollPane=new JScrollPane(paramCommTechPane);
-    	JScrollPane paramGeneralPaneScrollPane=new JScrollPane(paramGeneralPane);
-    	
-		JSplitPane hSplitPane = new JSplitPane();
-		hSplitPane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);//设置分割线方向
-		hSplitPane.setDividerLocation(40);
-		hSplitPane.setOneTouchExpandable(true);//让分割线显示出箭头
-		hSplitPane.setContinuousLayout(true);//操作箭头，重绘图形
-		hSplitPane.setLeftComponent(headerPanel);
-    	//hSplitPane.setRightComponent(param3gppScrollPane);
-		this.getContentPane().add(hSplitPane, BorderLayout.CENTER);
-		
-		JSplitPane hSplitPane2 = new JSplitPane();
-		hSplitPane2.setOrientation(JSplitPane.HORIZONTAL_SPLIT);//设置分割线方向
-		hSplitPane2.setDividerLocation(40);
-		hSplitPane2.setOneTouchExpandable(true);//让分割线显示出箭头
-		hSplitPane2.setContinuousLayout(true);//操作箭头，重绘图形
-		hSplitPane2.setLeftComponent(param3gppScrollPane);
-		hSplitPane.setRightComponent(hSplitPane2);
-				
-		JSplitPane hSplitPane3 = new JSplitPane();
-		hSplitPane3.setOrientation(JSplitPane.HORIZONTAL_SPLIT);//设置分割线方向
-		hSplitPane3.setDividerLocation(40);
-		hSplitPane3.setOneTouchExpandable(true);//让分割线显示出箭头
-		hSplitPane3.setContinuousLayout(true);//操作箭头，重绘图形
-		hSplitPane3.setLeftComponent(param3gpp2ScrollPane);
-		hSplitPane2.setRightComponent(hSplitPane3);
-		
-		JSplitPane hSplitPane4 = new JSplitPane();
-		hSplitPane4.setOrientation(JSplitPane.HORIZONTAL_SPLIT);//设置分割线方向
-		hSplitPane4.setDividerLocation(40);
-		hSplitPane4.setOneTouchExpandable(true);//让分割线显示出箭头
-		hSplitPane4.setContinuousLayout(true);//操作箭头，重绘图形
-		hSplitPane3.setRightComponent(hSplitPane4);
-		hSplitPane4.setLeftComponent(paramCommTechPaneScrollPane);
-		hSplitPane4.setRightComponent(paramGeneralPaneScrollPane);
-    	
+    	this.getContentPane().add(headerPanel, BorderLayout.CENTER);
+
 		// 为一般按钮添加动作监听器
 		jReadButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
@@ -259,7 +283,7 @@ public class ProfileEditor extends JFrame{
 		        profileNumberTextField.setText(temp);
 		        temp = String.format("0x%x", prfHeader.getProfileHeaderProfileSize());
 		        jta.append("ProfileSize: " + temp + "\n");
-		        profileSize.setText(temp);
+		        profileSizeValueLabel.setText(temp);
 		        temp = String.format("0x%x", prfHeader.getProfileHeaderNumTlvs());
 		        jta.append("NumTlvs: " + temp + "\n");
 		        numTlvs.setText(temp);
@@ -305,6 +329,7 @@ public class ProfileEditor extends JFrame{
 				ProfileHeader prfHeader;
 				int profileSize;
 				
+				/*
 				//Check input validate
 		        Set<Map.Entry<Integer, JTextField>> set;
 		        Iterator<Map.Entry<Integer, JTextField>> iterator;
@@ -333,6 +358,94 @@ public class ProfileEditor extends JFrame{
 		            	return;
 		            }
 		        }
+				*/
+				
+				System.out.print("=============== Check 3gpp param " + param3gppItemCount + " ===============\n");
+				//Check input validate
+				String regex = "([A-F]|[a-f]|[0-9]){0,}";
+				for(int i = 0; i < param3gppItemCount; i++) {
+					
+					String input = param3gppTextField[i].getText();
+		        	input = input.trim().replace(" ", "").toLowerCase(Locale.US);
+		        	input = input.trim().replace("0x", "");
+		        	System.out.println(i + input);
+		        	if(!input.equalsIgnoreCase("N/A") && (input.length()%2) != 0) {
+		            	String temp;
+		            	temp = String.format("3GPP param - %s:\nInput value should be byte align e.g. 0x1 must input 0x01.", param3gppLabel[i].getText());
+		        		JOptionPane.showMessageDialog(ProfileEditor.this, temp);
+		            	return;
+		        	}
+		        	
+		            if(!input.equalsIgnoreCase("N/A") && !input.matches(regex)) {
+		            	String temp;
+		            	temp = String.format("3GPP param - %s:\nInvalid charactor! Only 0-9 A-F a-f allowed", param3gppLabel[i].getText());
+		            	JOptionPane.showMessageDialog(ProfileEditor.this, temp);
+		            	return;
+		            }
+				}
+				
+				System.out.print("=============== Check 3gpp2 param " + param3gpp2ItemCount + " ===============\n");
+				for(int j = 0; j < param3gpp2ItemCount; j++) {
+					String input = param3gpp2TextField[j].getText();
+		        	input = input.trim().replace(" ", "").toLowerCase(Locale.US);
+		        	input = input.trim().replace("0x", "");
+
+		        	if(!input.equalsIgnoreCase("N/A") && (input.length()%2) != 0) {
+		            	String temp;
+		            	temp = String.format("3GPP2 param - %s:\nInput value should be byte align e.g. 0x1 must input 0x01.", param3gpp2Label[j].getText());
+		        		JOptionPane.showMessageDialog(ProfileEditor.this, temp);
+		            	return;
+		        	}
+		        	
+		            if(!input.equalsIgnoreCase("N/A") && !input.matches(regex)) {
+		            	String temp;
+		            	temp = String.format("3GPP2 param - %s:\nInvalid charactor! Only 0-9 A-F a-f allowed", param3gpp2Label[j].getText());
+		            	JOptionPane.showMessageDialog(ProfileEditor.this, temp);
+		            	return;
+		            }
+				}
+				
+				System.out.print("=============== Check common tech param " + paramCommTechItemCount + " ===============\n");
+				for(int i = 0; i < paramCommTechItemCount; i++) {
+					String input = paramCommTechTextField[i].getText();
+		        	input = input.trim().replace(" ", "").toLowerCase(Locale.US);
+		        	input = input.trim().replace("0x", "");
+
+		        	if(!input.equalsIgnoreCase("N/A") && (input.length()%2) != 0) {
+		            	String temp;
+		            	temp = String.format("Common tech param - %s:\nInput value should be byte align e.g. 0x1 must input 0x01.", paramCommTechLabel[i].getText());
+		        		JOptionPane.showMessageDialog(ProfileEditor.this, temp);
+		            	return;
+		        	}
+		        	
+		            if(!input.equalsIgnoreCase("N/A") && !input.matches(regex)) {
+		            	String temp;
+		            	temp = String.format("Common tech param - %s:\nInvalid charactor! Only 0-9 A-F a-f allowed", paramCommTechLabel[i].getText());
+		            	JOptionPane.showMessageDialog(ProfileEditor.this, temp);
+		            	return;
+		            }
+				}
+				
+				System.out.print("=============== Check general param " + paramGeneralItemCount + " ===============\n");
+				for(int i = 0; i < paramGeneralItemCount; i++) {
+					String input = paramGeneralTextField[i].getText();
+		        	input = input.trim().replace(" ", "").toLowerCase(Locale.US);
+		        	input = input.trim().replace("0x", "");
+
+		        	if(!input.equalsIgnoreCase("N/A") && (input.length()%2) != 0) {
+		            	String temp;
+		            	temp = String.format("General tech param - %s:\nInput value should be byte align e.g. 0x1 must input 0x01.", paramGeneralLabel[i].getText());
+		        		JOptionPane.showMessageDialog(ProfileEditor.this, temp);
+		            	return;
+		        	}
+		        	
+		            if(!input.equalsIgnoreCase("N/A") && !input.matches(regex)) {
+		            	String temp;
+		            	temp = String.format("General tech param - %s:\nInvalid charactor! Only 0-9 A-F a-f allowed", paramGeneralLabel[i].getText());
+		            	JOptionPane.showMessageDialog(ProfileEditor.this, temp);
+		            	return;
+		            }
+				}
 				
 				System.out.print("=============== Write button ===============\n");
 				
@@ -342,8 +455,8 @@ public class ProfileEditor extends JFrame{
 			        ProfileAnalyze profileAnalyze = new ProfileAnalyze();
 			        tlvList = profileAnalyze.unpack(buff, prfHeader.getProfileHeaderLen());
 			        
-			        //Set<Map.Entry<Integer, JTextField>> set = textFieldList.entrySet();
-			        //Iterator<Map.Entry<Integer, JTextField>> iterator = set.iterator();
+			        Set<Map.Entry<Integer, JTextField>> set = textFieldList.entrySet();
+			        Iterator<Map.Entry<Integer, JTextField>> iterator = set.iterator();
 			        set = textFieldList.entrySet();
 			        iterator = set.iterator();
 			        
@@ -383,15 +496,15 @@ public class ProfileEditor extends JFrame{
 					prfHeader = new ProfileHeader();
 				}
 				
-		        //Caculate profile size
-		        profileSize = prfHeader.getProfileHeaderLen(); //
+		        //Calculate profile size
+		        profileSize = 0; //Without header
 		        for(int i = 0; i < tlvList.size(); i++) {
 		        	profileSize += 4; //T and L
 		        	profileSize += tlvList.get(i).getLen();
             	}
 		        System.out.print("New profile size:" + profileSize + "\n");
 		        
-		        byte[] newBuff = new byte[profileSize];
+		        byte[] newBuff = new byte[profileSize + prfHeader.getProfileHeaderLen()];
 		        int offset = 32;
 		     		        
 		        for(int i = 0; i < tlvList.size(); i++) {
@@ -430,6 +543,7 @@ public class ProfileEditor extends JFrame{
 				
 				System.out.println("New profileSize: " + profileSize);
 				prfHeader.putProfileHeaderProfileSize(newBuff, profileSize);
+				profileSizeValueLabel.setText(String.format("0x%x", profileSize));
 				
 				int numTlvs = tlvList.size();
 				System.out.println("New numTlvs: " + numTlvs);
@@ -456,11 +570,8 @@ public class ProfileEditor extends JFrame{
 				if(version.equals("N/A")) version = "0x0000";
 				prfHeader.putProfileHeaderVersion(newBuff, version);
 				
-				//fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES );
-				//fileChooser.showDialog(new JLabel(), "选择"); 
 				int select = fileChooser.showSaveDialog(ProfileEditor.this);
 				
-				//fileChooser.setSelectedFile(new File("新建.txt")); 
 				File file = null;
 
 				String fileName = null;
@@ -505,20 +616,68 @@ public class ProfileEditor extends JFrame{
 			}
 		});
 		
-		jButtonPane.setLayout(null);
-		jButtonPane.setPreferredSize(new Dimension(0, 50));
-		jButtonPane.add(jReadButton);
-		jButtonPane.add(jWriteButton);
-		this.getContentPane().add(jButtonPane, BorderLayout.NORTH);
-
-		this.getContentPane().add(jsp, BorderLayout.SOUTH);
 		this.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		this.setVisible(true);
 	}
 	
+	public void itemStateChanged(ItemEvent e){
+		if(e.getStateChange() == ItemEvent.SELECTED){
+			this.getContentPane().remove(headerPanel);
+			this.getContentPane().remove(param3gppPane);
+			this.getContentPane().remove(param3gpp2Pane);
+			this.getContentPane().remove(paramCommTechPane);
+			this.getContentPane().remove(paramGeneralPane);
+
+			if(comboBox.getSelectedItem()=="Profile Header") {
+				System.out.println("选择了Profile Header");
+				
+				if(slectedFile != null) {
+					
+				} else {
+
+				}
+
+				this.getContentPane().add(headerPanel, BorderLayout.CENTER);
+				this.getContentPane().repaint();
+				this.setVisible(true);
+				return;
+			}
+			
+			if(comboBox.getSelectedItem()=="3GPP Parameters") {
+				System.out.println("选择了3GPP Parameters");
+		    	this.getContentPane().add(param3gppPane, BorderLayout.CENTER);
+		    	this.getContentPane().repaint();
+		    	this.setVisible(true);
+		    	return;
+			}
+			
+			if(comboBox.getSelectedItem()=="3GPP2 Parameters") {
+				System.out.println("选择了3GPP2 Parameters");
+		    	this.getContentPane().add(param3gpp2Pane, BorderLayout.CENTER);
+		    	this.getContentPane().repaint();
+		    	this.setVisible(true);
+		    	return;
+			}
+			
+			if(comboBox.getSelectedItem()=="Common Tech Parameters") {
+				System.out.println("选择了Common Tech Parameters");
+		    	this.getContentPane().add(paramCommTechPane, BorderLayout.CENTER);
+		    	this.getContentPane().repaint();
+		    	this.setVisible(true);
+		    	return;
+			}
+			
+			if(comboBox.getSelectedItem()=="General Parameters") {
+				System.out.println("选择了General Parameters");
+		    	this.getContentPane().add(paramGeneralPane, BorderLayout.CENTER);
+		    	this.getContentPane().repaint();
+		    	this.setVisible(true);
+		    	return;
+			}
+		}
+	}
+	
 	public byte[] readFile(String filename2){
-		//FileReader fr = null;
-		//BufferedReader br = null;
 		byte[] buffer = null;
 
 		try {
@@ -538,13 +697,7 @@ public class ProfileEditor extends JFrame{
 				fi.close();
 				throw new IOException("Could not completely read file " + file.getName());
 			}
-			//fr= new FileReader(filename2);
-			//br=new BufferedReader(fr);
-			//String str;
-			//while((str=br.readLine())!=null){
-			//	jta.append(str+"\n");
-			//	System.out.println(str);
-			//}
+			
 			fi.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
