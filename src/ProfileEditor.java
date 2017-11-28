@@ -553,15 +553,15 @@ public class ProfileEditor extends JFrame implements ItemListener {
 				System.out.println("New magicNumber: " + magicNumber);
 				prfHeader.putProfileHeaderMagicNumber(newBuff, magicNumber);
 				
-				int timeCreated = 0; //TODO
+				int timeCreated = prfHeader.getProfileHeaderTimerCreated(); //TODO
 				System.out.println("New timeCreated: " + timeCreated);
 				prfHeader.putProfileHeaderTimeCreated(newBuff, timeCreated);
 				
-				int lastModifiedTime = 0; //TODO
+				int lastModifiedTime = prfHeader.getProfileHeaderLastModifiedTime(); //TODO
 				System.out.println("New lastModifiedTime: " + lastModifiedTime);
 				prfHeader.putProfileHeaderLastModifiedTime(newBuff, lastModifiedTime);
 				
-				int lastReadTime = 0; //TODO
+				int lastReadTime = prfHeader.getProfileHeaderLastReadTime(); //TODO
 				System.out.println("New lastReadTime: " + lastReadTime);
 				prfHeader.putProfileHeaderLastReadTime(newBuff, lastReadTime);
 
